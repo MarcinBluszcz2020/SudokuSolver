@@ -17,9 +17,7 @@
 				cells.AddRange(rowCells);
 			}
 
-			var cellsWithValues = cells.Where(x => x.HasValue).Select(x => x!.Value).ToArray();
-
-			return cellsWithValues.Length.Equals(cellsWithValues.Distinct().Count());
+			return CheckIfNumbersNotRepeating(cells);
 		}
 	}
 }

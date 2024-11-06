@@ -21,6 +21,18 @@
 			}
 		}
 
+		public void SetCellValue(int row, int column, int? value) 
+		{
+			_cells[row][column] = value;
+		}
+
+		protected static bool CheckIfNumbersNotRepeating(IEnumerable<int?> cells)
+		{
+			var cellsWithValues = cells.Where(x => x.HasValue).Select(x => x!.Value).ToArray();
+
+			return cellsWithValues.Length.Equals(cellsWithValues.Distinct().Count());
+		}
+
 		public int?[] GetColumnCells(int index)
 		{
 			return _cells.Select(row => row[index]).ToArray();

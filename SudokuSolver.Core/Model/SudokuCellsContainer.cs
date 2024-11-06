@@ -1,4 +1,6 @@
-﻿namespace SudokuSolver.Core.Model
+﻿using System.Text;
+
+namespace SudokuSolver.Core.Model
 {
 	public abstract class SudokuCellsContainer
 	{
@@ -21,9 +23,19 @@
 			}
 		}
 
-		public void SetCellValue(int row, int column, int? value) 
+		public void SetRowValues(int rowIndex,int?[] rowValues) 
 		{
-			_cells[row][column] = value;
+			if (rowValues.Length != _containerSize) 
+			{
+				throw new ArgumentException("Invalid values");
+			}
+
+			rowValues.CopyTo(_cells[rowIndex], 0);
+		}
+
+		public void SetCellValue(int rowIndex, int columnIndex, int? value) 
+		{
+			_cells[rowIndex][columnIndex] = value;
 		}
 
 		protected static bool CheckIfNumbersNotRepeating(IEnumerable<int?> cells)
@@ -33,14 +45,14 @@
 			return cellsWithValues.Length.Equals(cellsWithValues.Distinct().Count());
 		}
 
-		public int?[] GetColumnCells(int index)
+		public int?[] GetColumnCells(int columnIndex)
 		{
-			return _cells.Select(row => row[index]).ToArray();
+			return _cells.Select(row => row[columnIndex]).ToArray();
 		}
 
-		public int?[] GetRowCells(int index)
+		public int?[] GetRowCells(int rowIndex)
 		{
-			return _cells[index];
+			return _cells[rowIndex];
 		}
 
 		public abstract bool IsValid();
@@ -66,6 +78,27 @@
 		public bool IsCompleted()
 		{
 			return IsValid() && !HasEmptyFields();
+		}
+
+		public string PrettyPrint()
+		{
+			var sb = new StringBuilder();
+
+			for (var i = 0; i < _containerSize; i++)
+			{
+				var rowCells = GetRowCells(i);
+
+				foreach (var cell in rowCells)
+				{
+					var cellValue=cell.HasValue? cell.Value.ToString() : " ";
+
+					sb.Append($"[{cellValue}]");
+				}
+
+				sb.AppendLine();
+			}
+
+			return sb.ToString();
 		}
 	}
 }
